@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // durasi sewa, add-on, dan metode pembayaran -- supaya tidak menulis
 // ulang struktur Container+InkWell+border 3 kali dengan sedikit beda.
 //
-// Border biru/teal muncul kalau "selected" true, sesuai spek
+// Border pink muncul kalau "selected" true, sesuai spek
 // "InkWell + border terpilih" di halaman Pembayaran.
 class SelectableOption extends StatelessWidget {
   final bool selected;

@@ -23,10 +23,42 @@ class _HomePageState extends State<HomePage> {
   String? _toastMessage;
   int _toastToken = 0;
 
+  // Controller + teks pencarian untuk search bar di Home.
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Setiap isi keranjang berubah (di halaman mana pun), Home ikut
+    // di-refresh supaya angka badge keranjang selalu sesuai.
+    CartStore.onChanged = () {
+      if (mounted) {
+        setState(() {});
+      }
+    };
+  }
+
+  @override
+  void dispose() {
+    CartStore.onChanged = null;
+    _searchController.dispose();
+    super.dispose();
+  }
+
   // Daftar layanan setelah difilter sesuai kategori yang dipilih
-  // (Lapangan / Kelas / Sewa Alat), memakai field category di PadelCourt.
+  // (Lapangan / Kelas), memakai field category di PadelCourt.
+  // Selain kategori, daftar juga difilter oleh kata kunci pencarian
+  // (cocokkan dengan nama atau lokasi, tidak peduli huruf besar/kecil).
   List<PadelCourt> get _filteredCourts {
-    return _courts.where((c) => c.category == _selectedCategory).toList();
+    final query = _searchQuery.trim().toLowerCase();
+    return _courts.where((c) {
+      final matchCategory = c.category == _selectedCategory;
+      final matchSearch = query.isEmpty ||
+          c.name.toLowerCase().contains(query) ||
+          c.location.toLowerCase().contains(query);
+      return matchCategory && matchSearch;
+    }).toList();
   }
 
   // Daftar layanan yang sudah ditandai favorit (hati merah), dari kategori mana pun.
@@ -153,17 +185,7 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Stack(
           children: [
-            _navIndex == 1
-                ? _buildFavoritesView()
-                : Column(
-              children: [
-                _buildGreeting(),
-                _buildSearchBar(),
-                _buildCategoryChips(),
-                const SizedBox(height: 4),
-                Expanded(child: _buildCourtGrid()),
-              ],
-            ),
+            _buildTabContent(),
             if (_toastMessage != null)
               Positioned(
                 top: 8,
@@ -179,6 +201,64 @@ class _HomePageState extends State<HomePage> {
         child: CustomBottomNav(
           currentIndex: _navIndex,
           onTap: (index) => setState(() => _navIndex = index),
+        ),
+      ),
+    );
+  }
+
+  // Isi body sesuai tab bottom nav yang sedang aktif:
+  // 0 = Beranda, 1 = Favorit, 2 = Riwayat, 3 = Akun.
+  Widget _buildTabContent() {
+    if (_navIndex == 1) {
+      return _buildFavoritesView();
+    }
+    if (_navIndex == 2) {
+      return _buildComingSoon(
+        Icons.history,
+        'Riwayat Reservasi',
+        'Reservasi yang sudah kamu bayar akan muncul di sini.',
+      );
+    }
+    if (_navIndex == 3) {
+      return _buildComingSoon(
+        Icons.person_outline,
+        'Akun Saya',
+        'Pengaturan profil akan hadir di versi berikutnya.',
+      );
+    }
+    return Column(
+      children: [
+        _buildGreeting(),
+        _buildSearchBar(),
+        _buildCategoryChips(),
+        const SizedBox(height: 4),
+        Expanded(child: _buildCourtGrid()),
+      ],
+    );
+  }
+
+  // Tampilan sementara untuk tab yang belum punya halaman sungguhan
+  // (sesuai ketentuan UTS: cukup rancangan tampilan).
+  Widget _buildComingSoon(IconData icon, String title, String subtitle) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 56, color: Colors.pink.shade200),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+            ),
+          ],
         ),
       ),
     );
@@ -200,6 +280,8 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(width: 8),
             Expanded(
               child: TextField(
+                controller: _searchController,
+                onChanged: (value) => setState(() => _searchQuery = value),
                 decoration: InputDecoration(
                   hintText: 'Cari nama lapangan atau lokasi...',
                   hintStyle: TextStyle(
@@ -218,26 +300,26 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildGreeting() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              'Welcome to PadelBook!',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              'Silakan pilih layanan yang Anda butuhkan',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
-            ),
-          ],
-        ),
-      )
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Welcome to PadelBook!',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Silakan pilih layanan yang Anda butuhkan',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+              ),
+            ],
+          ),
+        )
     );
   }
 
@@ -284,7 +366,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Filter kategori (Semua/Indoor/Outdoor). Menggunakan Wrap supaya chip
+  // Filter kategori (Lapangan/Kelas). Menggunakan Wrap supaya chip
   // tidak overflow kalau daftar kategori bertambah atau layar sempit.
   Widget _buildCategoryChips() {
     return Padding(
@@ -329,7 +411,9 @@ class _HomePageState extends State<HomePage> {
     if (courts.isEmpty) {
       return Center(
         child: Text(
-          'Belum ada lapangan untuk kategori ini',
+          _searchQuery.trim().isEmpty
+              ? 'Belum ada lapangan untuk kategori ini'
+              : 'Tidak ada hasil untuk "${_searchQuery.trim()}"',
           style: TextStyle(color: Colors.grey.shade600),
         ),
       );

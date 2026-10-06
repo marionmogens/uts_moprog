@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 
 // ===================== DURASI =====================
+// Tiap slot jam di halaman Pilih Jadwal berdurasi 1 jam, jadi
+// durasi N jam = pengguna WAJIB memilih tepat N slot (field hours).
 class DurationOption {
   final String label;
+  final int hours; // jumlah slot 1 jam yang wajib dipilih
   final double multiplier; // dikalikan ke harga per jam lapangan
-  const DurationOption({required this.label, required this.multiplier});
+  const DurationOption({
+    required this.label,
+    required this.hours,
+    required this.multiplier,
+  });
 }
 
 const List<DurationOption> durationOptions = [
-  DurationOption(label: '1 Jam', multiplier: 1),
-  DurationOption(label: '1.5 Jam', multiplier: 1.5),
-  DurationOption(label: '2 Jam', multiplier: 2),
+  DurationOption(label: '1 Jam', hours: 1, multiplier: 1),
+  DurationOption(label: '2 Jam', hours: 2, multiplier: 2),
 ];
 
 // ===================== ADD-ON =====================

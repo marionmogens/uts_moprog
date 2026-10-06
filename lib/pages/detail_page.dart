@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/booking_options.dart';
+import '../models/cart_item.dart';
 import '../models/padel_court.dart';
 import '../utils/formatters.dart';
 import '../widgets/facility_chip.dart';
@@ -8,7 +9,10 @@ import 'schedule_page.dart';
 
 class DetailPage extends StatefulWidget {
   final PadelCourt court;
-  const DetailPage({super.key, required this.court});
+  // Diisi kalau halaman ini dibuka lewat tombol "Edit" di Keranjang.
+  // Pilihan durasi, add-on, dan catatan akan terisi dari reservasi tsb.
+  final CartItem? editItem;
+  const DetailPage({super.key, required this.court, this.editItem});
 
   @override
   State<DetailPage> createState() => _DetailPageState();
@@ -22,6 +26,28 @@ class _DetailPageState extends State<DetailPage> {
   final Set<String> _selectedAddons = {};
 
   final TextEditingController _noteController = TextEditingController();
+
+  // Jumlah add-on dari reservasi yang sedang diedit (supaya jumlahnya
+  // tidak kembali ke 1 saat pengguna hanya ingin menambah add-on lain).
+  final Map<String, int> _addonQuantities = {};
+
+  @override
+  void initState() {
+    super.initState();
+    final item = widget.editItem;
+    if (item != null) {
+      final durationIndex =
+      durationOptions.indexWhere((d) => d.label == item.duration);
+      if (durationIndex != -1) {
+        _selectedDurationIndex = durationIndex;
+      }
+      for (final addon in item.addons) {
+        _selectedAddons.add(addon.name);
+        _addonQuantities[addon.name] = addon.quantity;
+      }
+      _noteController.text = item.note;
+    }
+  }
 
   @override
   void dispose() {
@@ -69,8 +95,14 @@ class _DetailPageState extends State<DetailPage> {
     final base = (widget.court.pricePerHour * duration.multiplier).round();
     final addonsPrice = _addons
         .where((addon) => _selectedAddons.contains(addon.name))
-        .fold(0, (sum, addon) => sum + addon.price);
+        .fold(0, (sum, addon) => sum + addon.price * (_addonQuantities[addon.name] ?? 1));
     return base + addonsPrice;
+  }
+
+  // Harga sewa lapangan saja (tanpa add-on) untuk durasi yang dipilih.
+  int get _courtPrice {
+    final duration = durationOptions[_selectedDurationIndex];
+    return (widget.court.pricePerHour * duration.multiplier).round();
   }
 
   void _goToSchedule() {
@@ -80,9 +112,18 @@ class _DetailPageState extends State<DetailPage> {
         builder: (context) => SchedulePage(
           court: widget.court,
           duration: durationOptions[_selectedDurationIndex].label,
-          addons: _selectedAddons.toList(),
+          durationHours: durationOptions[_selectedDurationIndex].hours,
+          addons: _addons
+              .where((addon) => _selectedAddons.contains(addon.name))
+              .map((addon) => CartAddon(
+            name: addon.name,
+            price: addon.price,
+            quantity: _addonQuantities[addon.name] ?? 1,
+          ))
+              .toList(),
           note: _noteController.text.trim(),
-          pricePerSession: _totalPrice,
+          courtPrice: _courtPrice,
+          editItem: widget.editItem,
         ),
       ),
     );
@@ -96,7 +137,7 @@ class _DetailPageState extends State<DetailPage> {
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         backgroundColor: Colors.pink.shade300,
-        title: Text(court.name,
+        title: Text(widget.editItem == null ? court.name : 'Edit: ${court.name}',
             style: const TextStyle(color: Colors.white, fontSize: 16)),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [

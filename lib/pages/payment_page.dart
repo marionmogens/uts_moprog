@@ -42,6 +42,13 @@ class _PaymentPageState extends State<PaymentPage> {
             onPressed: () {
               Navigator.pop(context); // tutup dialog dulu
               final total = CartStore.totalPrice;
+              // Salin isi keranjang DULU sebelum dikosongkan, supaya
+              // halaman Konfirmasi masih bisa menampilkan rinciannya.
+              final paidItems = [...CartStore.items];
+              // Kode booking dibuat sekali di sini lalu dikirim ke
+              // Konfirmasi, jadi nilainya tidak berubah-ubah.
+              final bookingCode =
+                  'PDL-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
               CartStore.clear(); // "pembayaran berhasil" -> keranjang dikosongkan
               Navigator.pushAndRemoveUntil(
                 context,
@@ -50,6 +57,8 @@ class _PaymentPageState extends State<PaymentPage> {
                     customerName: widget.customerName,
                     totalPaid: total,
                     methodName: method.name,
+                    bookingCode: bookingCode,
+                    items: paidItems,
                   ),
                 ),
                     (route) => route.isFirst, // bersihkan stack sampai Home saja
@@ -112,7 +121,7 @@ class _PaymentPageState extends State<PaymentPage> {
               const _SectionTitle('Pilih Metode Pembayaran'),
               const SizedBox(height: 12),
               // 3 card metode pembayaran, masing-masing SelectableOption
-              // (Container+InkWell) dengan border biru/teal saat terpilih.
+              // (Container+InkWell) dengan border pink saat terpilih.
               ...List.generate(paymentMethods.length, (index) {
                 final method = paymentMethods[index];
                 final isSelected = _selectedMethodIndex == index;

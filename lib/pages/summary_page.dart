@@ -80,7 +80,7 @@ class _SummaryPageState extends State<SummaryPage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  '${item.court.name} (x${item.quantity})',
+                                  item.court.name,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13),
@@ -91,6 +91,20 @@ class _SummaryPageState extends State<SummaryPage> {
                                       fontSize: 11,
                                       color: Colors.grey.shade600),
                                 ),
+                                if (item.addons.isNotEmpty)
+                                  Text(
+                                    'Add-on: ${item.addonsText}',
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey.shade600),
+                                  ),
+                                if (item.note.isNotEmpty)
+                                  Text(
+                                    'Catatan: ${item.note}',
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey.shade600),
+                                  ),
                               ],
                             ),
                           ),
