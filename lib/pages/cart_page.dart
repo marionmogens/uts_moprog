@@ -64,7 +64,7 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        backgroundColor: Colors.teal.shade700,
+        backgroundColor: Colors.pink.shade300,
         title: const Text('Keranjang',
             style: TextStyle(color: Colors.white, fontSize: 16)),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -158,7 +158,7 @@ class _CartPageState extends State<CartPage> {
               Text(
                 formatRupiah(item.totalPrice),
                 style: TextStyle(
-                  color: Colors.teal.shade700,
+                  color: Colors.pink.shade300,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -193,7 +193,7 @@ class _CartPageState extends State<CartPage> {
         ),
         _stepperButton(
           icon: Icons.add,
-          background: Colors.teal.shade700,
+          background: Colors.pink.shade300,
           iconColor: Colors.white,
           onTap: () => _incrementQuantity(item),
         ),
@@ -249,7 +249,7 @@ class _CartPageState extends State<CartPage> {
                 Text(
                   formatRupiah(_totalPrice),
                   style: TextStyle(
-                    color: Colors.teal.shade700,
+                    color: Colors.pink.shade300,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -268,7 +268,7 @@ class _CartPageState extends State<CartPage> {
             }
                 : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal.shade700,
+              backgroundColor: Colors.pink.shade300,
               foregroundColor: Colors.white,
               disabledBackgroundColor: Colors.grey.shade300,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),

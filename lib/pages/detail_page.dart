@@ -58,13 +58,16 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
+  // Getter _addons
+  List<AddonOption> get _addons => addonsFor(widget.court.category);
+
   // Total harga dihitung ulang setiap build() dipanggil -> karena
   // dipanggil dari dalam setState (lewat pilih durasi/add-on), hasilnya
   // selalu "realtime" mengikuti state terbaru tanpa perlu logic tambahan.
   int get _totalPrice {
     final duration = durationOptions[_selectedDurationIndex];
     final base = (widget.court.pricePerHour * duration.multiplier).round();
-    final addonsPrice = addonOptions
+    final addonsPrice = _addons
         .where((addon) => _selectedAddons.contains(addon.name))
         .fold(0, (sum, addon) => sum + addon.price);
     return base + addonsPrice;
@@ -92,7 +95,7 @@ class _DetailPageState extends State<DetailPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        backgroundColor: Colors.teal.shade700,
+        backgroundColor: Colors.pink.shade300,
         title: Text(court.name,
             style: const TextStyle(color: Colors.white, fontSize: 16)),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -287,7 +290,7 @@ class _DetailPageState extends State<DetailPage> {
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
-                  color: isSelected ? Colors.teal.shade700 : Colors.black87,
+                  color: isSelected ? Colors.pink.shade300 : Colors.black87,
                 ),
               ),
             ),
@@ -303,7 +306,7 @@ class _DetailPageState extends State<DetailPage> {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
-      children: addonOptions.map((addon) {
+      children: _addons.map((addon) {
         final isSelected = _selectedAddons.contains(addon.name);
         return SelectableOption(
           selected: isSelected,
@@ -322,7 +325,7 @@ class _DetailPageState extends State<DetailPage> {
               Icon(
                 isSelected ? Icons.check_circle : Icons.add_circle_outline,
                 size: 16,
-                color: isSelected ? Colors.teal.shade700 : Colors.grey,
+                color: isSelected ? Colors.pink.shade300 : Colors.grey,
               ),
               const SizedBox(width: 6),
               Text(
@@ -364,7 +367,7 @@ class _DetailPageState extends State<DetailPage> {
                 Text(
                   formatRupiah(_totalPrice),
                   style: TextStyle(
-                    color: Colors.teal.shade700,
+                    color: Colors.pink.shade300,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -375,7 +378,7 @@ class _DetailPageState extends State<DetailPage> {
           ElevatedButton(
             onPressed: court.isAvailable ? _goToSchedule : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal.shade700,
+              backgroundColor: Colors.pink.shade300,
               foregroundColor: Colors.white,
               disabledBackgroundColor: Colors.grey.shade300,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),

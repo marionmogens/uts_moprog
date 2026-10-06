@@ -84,7 +84,7 @@ class _SchedulePageState extends State<SchedulePage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        backgroundColor: Colors.teal.shade700,
+        backgroundColor: Colors.pink.shade300,
         title: const Text('Pilih Jadwal',
             style: TextStyle(color: Colors.white, fontSize: 16)),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -123,12 +123,12 @@ class _SchedulePageState extends State<SchedulePage> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? Colors.teal.shade700
+                                ? Colors.pink.shade300
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               color: isSelected
-                                  ? Colors.teal.shade700
+                                  ? Colors.pink.shade300
                                   : Colors.grey.shade300,
                             ),
                           ),
@@ -165,7 +165,7 @@ class _SchedulePageState extends State<SchedulePage> {
                   child: Row(
                     children: [
                       Icon(Icons.calendar_today_outlined,
-                          size: 18, color: Colors.teal.shade700),
+                          size: 18, color: Colors.pink.shade300),
                       const SizedBox(width: 10),
                       Text(
                         _selectedDate == null
@@ -217,7 +217,7 @@ class _SchedulePageState extends State<SchedulePage> {
               // kalau canContinue false, onPressed diisi null (disabled).
               onPressed: canContinue ? _addToCart : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal.shade700,
+                backgroundColor: Colors.pink.shade300,
                 foregroundColor: Colors.white,
                 disabledBackgroundColor: Colors.grey.shade300,
                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -242,7 +242,7 @@ class _SchedulePageState extends State<SchedulePage> {
       children: [
         _legendDot(Colors.white, 'Tersedia', bordered: true),
         const SizedBox(width: 14),
-        _legendDot(Colors.teal.shade700, 'Dipilih'),
+        _legendDot(Colors.pink.shade300, 'Dipilih'),
         const SizedBox(width: 14),
         _legendDot(Colors.grey.shade300, 'Penuh'),
       ],
@@ -287,9 +287,9 @@ class _SchedulePageState extends State<SchedulePage> {
           textColor = Colors.grey.shade500;
           borderColor = Colors.grey.shade200;
         } else if (isSelected) {
-          backgroundColor = Colors.teal.shade700;
+          backgroundColor = Colors.pink.shade300;
           textColor = Colors.white;
-          borderColor = Colors.teal.shade700;
+          borderColor = Colors.pink.shade300;
         } else {
           backgroundColor = Colors.white;
           textColor = Colors.black87;

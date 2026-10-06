@@ -67,7 +67,7 @@ class _PaymentPageState extends State<PaymentPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        backgroundColor: Colors.teal.shade700,
+        backgroundColor: Colors.pink.shade300,
         title: const Text('Pembayaran',
             style: TextStyle(color: Colors.white, fontSize: 16)),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -82,7 +82,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.teal.shade700,
+                  color: Colors.pink.shade300,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -126,7 +126,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       children: [
                         Icon(method.icon,
                             color: isSelected
-                                ? Colors.teal.shade700
+                                ? Colors.pink.shade300
                                 : Colors.grey.shade700),
                         const SizedBox(width: 12),
                         Expanded(
@@ -149,7 +149,7 @@ class _PaymentPageState extends State<PaymentPage> {
                         ),
                         if (isSelected)
                           Icon(Icons.check_circle,
-                              color: Colors.teal.shade700, size: 20),
+                              color: Colors.pink.shade300, size: 20),
                       ],
                     ),
                   ),
@@ -178,7 +178,7 @@ class _PaymentPageState extends State<PaymentPage> {
             child: ElevatedButton(
               onPressed: _selectedMethodIndex != null ? _confirmPayment : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal.shade700,
+                backgroundColor: Colors.pink.shade300,
                 foregroundColor: Colors.white,
                 disabledBackgroundColor: Colors.grey.shade300,
                 padding: const EdgeInsets.symmetric(vertical: 14),

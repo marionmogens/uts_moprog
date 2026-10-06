@@ -155,7 +155,7 @@ class CourtCard extends StatelessWidget {
                       Text(
                         '${formatRupiah(court.pricePerHour)}/jam',
                         style: TextStyle(
-                          color: Colors.teal.shade700,
+                          color: Colors.pink.shade300,
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
                         ),

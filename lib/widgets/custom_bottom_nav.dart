@@ -69,14 +69,14 @@ class CustomBottomNav extends StatelessWidget {
                 children: [
                   Icon(
                     isSelected ? item.activeIcon : item.icon,
-                    color: isSelected ? Colors.teal.shade700 : Colors.grey,
+                    color: isSelected ? Colors.pink.shade300 : Colors.grey,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     item.label,
                     style: TextStyle(
                       fontSize: 11,
-                      color: isSelected ? Colors.teal.shade700 : Colors.grey,
+                      color: isSelected ? Colors.pink.shade300 : Colors.grey,
                     ),
                   ),
                 ],

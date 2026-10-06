@@ -38,20 +38,20 @@ class FacilityChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.teal.shade50,
+        color: Colors.pink.shade50,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.teal.shade100),
+        border: Border.all(color: Colors.pink.shade100),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(facilityIcon(label), size: 16, color: Colors.teal.shade700),
+          Icon(facilityIcon(label), size: 16, color: Colors.pink.shade300),
           const SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.teal.shade700,
+              color: Colors.pink.shade300,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -74,7 +74,7 @@ class ConfirmationPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                         letterSpacing: 1.5,
-                        color: Colors.teal.shade700,
+                        color: Colors.pink.shade300,
                       ),
                     ),
                     const Divider(height: 24),
@@ -94,7 +94,7 @@ class ConfirmationPage extends StatelessWidget {
                     Navigator.popUntil(context, (route) => route.isFirst);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal.shade700,
+                    backgroundColor: Colors.pink.shade300,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(

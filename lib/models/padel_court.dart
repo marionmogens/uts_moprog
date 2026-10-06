@@ -6,6 +6,9 @@ class PadelCourt {
   final String id;
   final String name;
   final String location;
+  // Kategori layanan: 'Lapangan', 'Kelas', atau 'Sewa Alat'.
+  // Dipakai chip kategori di Home untuk memfilter daftar layanan.
+  final String category;
   final String imageUrl;
   final int pricePerHour;
   final double rating;
@@ -22,6 +25,7 @@ class PadelCourt {
     required this.id,
     required this.name,
     required this.location,
+    required this.category,
     required this.imageUrl,
     required this.pricePerHour,
     required this.rating,

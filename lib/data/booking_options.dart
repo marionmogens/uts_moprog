@@ -21,10 +21,20 @@ class AddonOption {
 }
 
 const List<AddonOption> addonOptions = [
-  AddonOption(name: 'Sewa Raket', price: 25000),
-  AddonOption(name: 'Sewa Bola', price: 15000),
-  AddonOption(name: 'Handuk & Minum', price: 10000),
+  AddonOption(name: 'Sewa Raket', price: 35000),
+  AddonOption(name: 'Sewa Bola', price: 20000),
+  AddonOption(name: 'Handuk & Air Mineral 1,5L', price: 30000),
+  AddonOption(name: 'Coach', price: 150000)
 ];
+
+// Daftar tambahan yang ditawarkan, tergantung kategori layanan
+// Kelas tidak menawarkan Coach karena pelatih sudah termasuk di kelas
+List<AddonOption> addonsFor(String category) {
+  if (category == 'Kelas') {
+    return addonOptions.where((a) => a.name != 'Coach').toList();
+  }
+  return addonOptions;
+}
 
 // ===================== LAPANGAN (DI SATU VENUE) =====================
 const List<String> fieldOptions = ['Lapangan 1', 'Lapangan 2', 'Lapangan 3'];

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../data/dummy_courts.dart';
+import '../data/cart_store.dart';
 import '../models/padel_court.dart';
 import '../widgets/court_card.dart';
 import '../widgets/custom_bottom_nav.dart';
 import 'detail_page.dart';
+import 'cart_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,18 +16,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<PadelCourt> _courts = getDummyCourts();
-  final List<String> _categories = const ['Semua', 'Indoor', 'Outdoor'];
+  final List<String> _categories = const ['Lapangan', 'Kelas'];
 
-  String _selectedCategory = 'Semua';
+  String _selectedCategory = 'Lapangan';
   int _navIndex = 0;
   String? _toastMessage;
   int _toastToken = 0;
 
-  // Daftar lapangan setelah difilter sesuai kategori yang dipilih.
+  // Daftar layanan setelah difilter sesuai kategori yang dipilih
+  // (Lapangan / Kelas / Sewa Alat), memakai field category di PadelCourt.
   List<PadelCourt> get _filteredCourts {
-    if (_selectedCategory == 'Semua') return _courts;
-    final wantIndoor = _selectedCategory == 'Indoor';
-    return _courts.where((c) => c.isIndoor == wantIndoor).toList();
+    return _courts.where((c) => c.category == _selectedCategory).toList();
+  }
+
+  // Daftar layanan yang sudah ditandai favorit (hati merah), dari kategori mana pun.
+  List<PadelCourt> get _favoriteCourts {
+    return _courts.where((c) => c.isFavorite).toList();
   }
 
   void _toggleFavorite(PadelCourt court) {
@@ -85,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal.shade700,
+                    backgroundColor: Colors.pink.shade300,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -116,44 +122,42 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  Future<void> _openCart() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CartPage()),
+    );
+    // Refresh badge setelah kembali dari Keranjang, karena isi
+    // CartStore mungkin berubah (item dihapus atau jumlahnya diubah)
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        backgroundColor: Colors.teal.shade700,
+        backgroundColor: Colors.pink.shade300,
         automaticallyImplyLeading: false,
         titleSpacing: 16,
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Padel Point',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-            Text(
-              'Temukan & reservasi lapangan terdekat',
-              style: TextStyle(color: Colors.white70, fontSize: 11),
-            ),
-          ],
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Icon(Icons.notifications_none, color: Colors.white),
+        title: const Text(
+          'PadelBook',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
-        ],
+        ),
+        actions: [_buildCartButton()],
       ),
       body: SafeArea(
         child: Stack(
           children: [
-            Column(
+            _navIndex == 1
+                ? _buildFavoritesView()
+                : Column(
               children: [
+                _buildGreeting(),
                 _buildSearchBar(),
                 _buildCategoryChips(),
                 const SizedBox(height: 4),
@@ -212,6 +216,74 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildGreeting() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Welcome to PadelBook!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              'Silakan pilih layanan yang Anda butuhkan',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+            ),
+          ],
+        ),
+      )
+    );
+  }
+
+// Ikon keranjang di AppBar + badge jumlah item. Stack + Positioned
+// dipakai supaya badge bisa "menempel" di pojok kanan atas ikon.
+// Badge hanya muncul kalau keranjang tidak kosong.
+  Widget _buildCartButton() {
+    final count = CartStore.totalItemCount;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: InkWell(
+        onTap: _openCart,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+              if (count > 0)
+                Positioned(
+                  right: -8,
+                  top: -8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.redAccent,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '$count',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // Filter kategori (Semua/Indoor/Outdoor). Menggunakan Wrap supaya chip
   // tidak overflow kalau daftar kategori bertambah atau layar sempit.
   Widget _buildCategoryChips() {
@@ -224,7 +296,7 @@ class _HomePageState extends State<HomePage> {
           return ChoiceChip(
             label: Text(category),
             selected: isSelected,
-            selectedColor: Colors.teal.shade700,
+            selectedColor: Colors.pink.shade300,
             backgroundColor: Colors.white,
             labelStyle: TextStyle(
               color: isSelected ? Colors.white : Colors.black87,
@@ -235,6 +307,18 @@ class _HomePageState extends State<HomePage> {
         }).toList(),
       ),
     );
+  }
+
+  // Menghitung childAspectRatio supaya tinggi sel grid pas dengan isi card.
+  // Tinggi card = tinggi gambar (lebar / 1.6, sesuai AspectRatio 16/10)
+  // + bagian teks (sekitar 92 px). Dengan begini tidak ada ruang kosong
+  // di bawah card, berapa pun lebar layarnya.
+  double _cardAspectRatio(double gridWidth, int columns) {
+    const sidePadding = 16.0 * 2; // padding kiri-kanan grid
+    const spacing = 12.0; // jarak antar kolom
+    final cellWidth = (gridWidth - sidePadding - spacing * (columns - 1)) / columns;
+    final cellHeight = cellWidth / 1.6 + 92;
+    return cellWidth / cellHeight;
   }
 
   // Grid responsif: LayoutBuilder dipakai untuk menentukan jumlah kolom
@@ -267,7 +351,7 @@ class _HomePageState extends State<HomePage> {
             crossAxisCount: crossAxisCount,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: crossAxisCount == 1 ? 2.6 : 0.72,
+            childAspectRatio: _cardAspectRatio(constraints.maxWidth, crossAxisCount),
           ),
           itemBuilder: (context, index) {
             final court = courts[index];
@@ -281,6 +365,76 @@ class _HomePageState extends State<HomePage> {
           },
         );
       },
+    );
+  }
+
+  // Tampilan tab Favorit: grid 2 kolom supaya kartunya tidak terlalu
+  // melebar. Memakai CourtCard yang sama dengan Home, jadi gesture-nya
+  // (tap, double tap, long press, ikon hati) tetap bekerja.
+  Widget _buildFavoritesView() {
+    final favorites = _favoriteCourts;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
+          child: Text(
+            'My Favorites',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ),
+        Expanded(
+          child: favorites.isEmpty
+              ? _buildEmptyFavorites()
+              : LayoutBuilder(
+            builder: (context, constraints) {
+              return GridView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: favorites.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: _cardAspectRatio(constraints.maxWidth, 2),
+                ),
+                itemBuilder: (context, index) {
+                  final court = favorites[index];
+                  return CourtCard(
+                    court: court,
+                    onTap: () => _openDetail(court),
+                    onDoubleTap: () => _toggleFavorite(court),
+                    onLongPress: () => _showQuickPreview(court),
+                    onToggleFavorite: () => _toggleFavorite(court),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyFavorites() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.favorite_border, size: 56, color: Colors.grey.shade400),
+            const SizedBox(height: 12),
+            Text('Belum ada favorit',
+                style: TextStyle(color: Colors.grey.shade600)),
+            const SizedBox(height: 4),
+            Text(
+              'Ketuk ikon hati atau ketuk dua kali pada layanan untuk menyimpannya di favorit',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

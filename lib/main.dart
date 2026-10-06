@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Padel Point',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.teal,
+        primarySwatch: Colors.pink,
         scaffoldBackgroundColor: Colors.grey.shade100,
         fontFamily: 'Roboto',
       ),

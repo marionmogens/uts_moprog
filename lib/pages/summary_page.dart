@@ -48,7 +48,7 @@ class _SummaryPageState extends State<SummaryPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        backgroundColor: Colors.teal.shade700,
+        backgroundColor: Colors.pink.shade300,
         title: const Text('Ringkasan Reservasi',
             style: TextStyle(color: Colors.white, fontSize: 16)),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -113,7 +113,7 @@ class _SummaryPageState extends State<SummaryPage> {
                           formatRupiah(CartStore.totalPrice),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.teal.shade700,
+                            color: Colors.pink.shade300,
                             fontSize: 15,
                           ),
                         ),
@@ -157,7 +157,7 @@ class _SummaryPageState extends State<SummaryPage> {
                 child: ElevatedButton(
                   onPressed: _goToPayment,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal.shade700,
+                    backgroundColor: Colors.pink.shade300,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(

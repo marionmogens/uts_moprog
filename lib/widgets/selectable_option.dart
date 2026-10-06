@@ -29,10 +29,10 @@ class SelectableOption extends StatelessWidget {
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
-          color: selected ? Colors.teal.shade50 : Colors.white,
+          color: selected ? Colors.pink.shade50 : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selected ? Colors.teal.shade700 : Colors.grey.shade300,
+            color: selected ? Colors.pink.shade300 : Colors.grey.shade300,
             width: selected ? 2 : 1,
           ),
         ),
