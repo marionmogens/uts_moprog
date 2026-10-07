@@ -47,6 +47,11 @@ class _DetailPageState extends State<DetailPage> {
       }
       _noteController.text = item.note;
     }
+    // Kelas selalu 2 jam, jadi durasinya tidak dipilih pengguna.
+    if (widget.court.category == 'Kelas') {
+      final twoHours = durationOptions.indexWhere((d) => d.label == '2 Jam');
+      if (twoHours != -1) _selectedDurationIndex = twoHours;
+    }
   }
 
   @override
@@ -183,12 +188,22 @@ class _DetailPageState extends State<DetailPage> {
                           .map((facility) => FacilityChip(label: facility))
                           .toList(),
                     ),
-                    const SizedBox(height: 20),
-                    const _SectionTitle('Pilih Durasi'),
-                    const SizedBox(height: 10),
-                    _buildDurationPicker(),
+                    if (widget.court.category != 'Kelas') ...[
+                      const SizedBox(height: 20),
+                      const _SectionTitle('Pilih Durasi'),
+                      const SizedBox(height: 10),
+                      _buildDurationPicker(),
+                    ],
                     const SizedBox(height: 20),
                     const _SectionTitle('Tambahan (Opsional)'),
+                    if (widget.court.category == 'Kelas') ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'Sudah termasuk pelatih, raket dan bola untuk 2 orang. '
+                            'Silakan menambah raket atau bola apabila diperlukan.',
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      ),
+                    ],
                     const SizedBox(height: 10),
                     _buildAddonPicker(),
                     const SizedBox(height: 20),
@@ -293,6 +308,17 @@ class _DetailPageState extends State<DetailPage> {
             const SizedBox(width: 4),
             Text('(${court.reviewCount} ulasan)',
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+            const SizedBox(width: 4),
+            Text(
+              court.category == 'Kelas'
+                  ? '${formatRupiah(court.pricePerHour)}/jam • Durasi 2 jam per sesi'
+                  : '${formatRupiah(court.pricePerHour)}/jam',
+              style: TextStyle(
+                color: Colors.pink.shade300,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
             const SizedBox(width: 12),
             Icon(
               court.isIndoor ? Icons.home_work_outlined : Icons.park_outlined,

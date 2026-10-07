@@ -212,20 +212,20 @@ class _HomePageState extends State<HomePage> {
     if (_navIndex == 1) {
       return _buildFavoritesView();
     }
-    if (_navIndex == 2) {
-      return _buildComingSoon(
-        Icons.history,
-        'Riwayat Reservasi',
-        'Reservasi yang sudah kamu bayar akan muncul di sini.',
-      );
-    }
-    if (_navIndex == 3) {
-      return _buildComingSoon(
-        Icons.person_outline,
-        'Akun Saya',
-        'Pengaturan profil akan hadir di versi berikutnya.',
-      );
-    }
+    // if (_navIndex == 2) {
+    //   return _buildComingSoon(
+    //     Icons.history,
+    //     'Riwayat Reservasi',
+    //     'Reservasi yang sudah kamu bayar akan muncul di sini.',
+    //   );
+    // }
+    // if (_navIndex == 3) {
+    //   return _buildComingSoon(
+    //     Icons.person_outline,
+    //     'Akun Saya',
+    //     'Pengaturan profil akan hadir di versi berikutnya.',
+    //   );
+    // }
     return Column(
       children: [
         _buildGreeting(),
@@ -239,30 +239,30 @@ class _HomePageState extends State<HomePage> {
 
   // Tampilan sementara untuk tab yang belum punya halaman sungguhan
   // (sesuai ketentuan UTS: cukup rancangan tampilan).
-  Widget _buildComingSoon(IconData icon, String title, String subtitle) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 56, color: Colors.pink.shade200),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildComingSoon(IconData icon, String title, String subtitle) {
+  //   return Center(
+  //     child: Padding(
+  //       padding: const EdgeInsets.symmetric(horizontal: 32),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Icon(icon, size: 56, color: Colors.pink.shade200),
+  //           const SizedBox(height: 12),
+  //           Text(
+  //             title,
+  //             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+  //           ),
+  //           const SizedBox(height: 4),
+  //           Text(
+  //             subtitle,
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildSearchBar() {
     return Padding(

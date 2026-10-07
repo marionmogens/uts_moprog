@@ -123,9 +123,11 @@ List<PadelCourt> getDummyCourts() {
       isIndoor: true,
       isAvailable: true,
       description:
-      'Kelas dasar untuk yang baru pertama kali main padel. Dipandu pelatih bersertifikat, mulai dari teknik memegang raket, pukulan dasar, sampai aturan main.',
+      'Kelas dasar untuk yang baru pertama kali main padel. Dipandu pelatih bersertifikat, mulai dari teknik memegang raket, pukulan dasar, sampai aturan main.'
+          ' Sudah termasuk raket dan bola untuk 2 orang.',
       facilities: ['Parkir', 'Toilet', 'AC', 'Loker'],
       openHours: '08.00 - 20.00 WIB',
+      classStartSlots: [2, 4, 7],
     ),
     PadelCourt(
       id: 'k2',
@@ -140,9 +142,11 @@ List<PadelCourt> getDummyCourts() {
       isIndoor: true,
       isAvailable: true,
       description:
-      'Kelas lanjutan untuk melatih strategi bermain ganda, pukulan smash, dan penggunaan dinding kaca. Cocok untuk pemain yang sudah paham dasar permainan.',
+      'Kelas lanjutan untuk melatih strategi bermain ganda, pukulan smash, dan penggunaan dinding kaca. Cocok untuk pemain yang sudah paham dasar permainan.'
+          ' Sudah termasuk raket dan bola untuk 2 orang.',
       facilities: ['Parkir', 'Toilet', 'AC', 'Shower', 'Wifi'],
       openHours: '09.00 - 21.00 WIB',
+      classStartSlots: [4, 7, 10, 12],
     ),
   ];
 }

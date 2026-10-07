@@ -4,6 +4,7 @@ import '../data/cart_store.dart';
 import '../models/cart_item.dart';
 import '../models/padel_court.dart';
 import '../utils/formatters.dart';
+import '../widgets/selectable_option.dart';
 import 'cart_page.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -37,6 +38,18 @@ class _SchedulePageState extends State<SchedulePage> {
   // Slot yang dipilih (bisa lebih dari satu, jumlahnya harus sama
   // dengan durationHours supaya reservasi valid).
   final Set<int> _selectedSlotIndexes = {};
+  // Kelas punya sesi jam tetap dan tidak memilih lapangan.
+  bool get _isClass => widget.court.category == 'Kelas';
+
+  // Kelas: memilih satu sesi berarti memilih 2 slot berurutan
+  // (slot awal dan slot sesudahnya), supaya alur keranjang tetap sama.
+  void _selectClassSession(int startSlot) {
+    setState(() {
+      _selectedSlotIndexes.clear();
+      _selectedSlotIndexes.add(startSlot);
+      _selectedSlotIndexes.add(startSlot + 1);
+    });
+  }
 
   @override
   void initState() {
@@ -66,8 +79,7 @@ class _SchedulePageState extends State<SchedulePage> {
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
-        // reset slot yang sudah dipilih kalau ganti tanggal, supaya
-        // tidak salah asumsi jam yang sama otomatis tersedia lagi.
+        // Kelas: sesinya tetap, jadi tidak perlu direset saat ganti tanggal.
         _selectedSlotIndexes.clear();
       });
     }
@@ -79,7 +91,7 @@ class _SchedulePageState extends State<SchedulePage> {
     final cartItem = CartItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       court: widget.court,
-      fieldName: _selectedField,
+      fieldName: _isClass ? widget.court.location : _selectedField,
       date: _selectedDate!,
       timeSlot: _formatSlots(sorted),
       slotIndexes: sorted,
@@ -130,7 +142,7 @@ class _SchedulePageState extends State<SchedulePage> {
       // slot milik reservasi yang sedang diedit tidak ikut dikunci
       if (item == widget.editItem) continue;
       final sameCourt = item.court.id == widget.court.id;
-      final sameField = item.fieldName == _selectedField;
+      final sameField = _isClass || item.fieldName == _selectedField;
       if (sameCourt && sameField && _isSameDay(item.date, _selectedDate!)) {
         result.addAll(item.slotIndexes);
       }
@@ -193,8 +205,8 @@ class _SchedulePageState extends State<SchedulePage> {
   }
 
   String get _buttonLabel {
-    if (_selectedDate == null) return 'Pilih tanggal dulu';
     if (_selectedSlotIndexes.length < widget.durationHours) {
+      if (_isClass) return 'Pilih sesi kelas terlebih dahulu';
       return 'Pilih ${widget.durationHours} jam berurutan '
           '(${_selectedSlotIndexes.length}/${widget.durationHours})';
     }
@@ -236,54 +248,57 @@ class _SchedulePageState extends State<SchedulePage> {
               ),
               const SizedBox(height: 20),
 
-              const _SectionTitle('Pilih Lapangan'),
-              const SizedBox(height: 10),
-              Row(
-                children: fieldOptions.map((field) {
-                  final isSelected = field == _selectedField;
-                  return Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        right: field == fieldOptions.last ? 0 : 8,
-                      ),
-                      child: InkWell(
-                        onTap: () => setState(() {
-                          _selectedField = field;
-                          // slot yang sudah di keranjang beda tiap lapangan,
-                          // jadi pilihan lama dikosongkan.
-                          _selectedSlotIndexes.clear();
-                        }),
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? Colors.pink.shade300
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
+              if (!_isClass) ...[
+                const _SectionTitle('Pilih Lapangan'),
+                const SizedBox(height: 10),
+                Row(
+                  children: fieldOptions.map((field) {
+                    final isSelected = field == _selectedField;
+                    return Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          right: field == fieldOptions.last ? 0 : 8,
+                        ),
+                        child: InkWell(
+                          onTap: () => setState(() {
+                            _selectedField = field;
+                            // slot yang sudah di keranjang beda tiap lapangan,
+                            // jadi pilihan lama dikosongkan.
+                            _selectedSlotIndexes.clear();
+                          }),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
                               color: isSelected
                                   ? Colors.pink.shade300
-                                  : Colors.grey.shade300,
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: isSelected
+                                    ? Colors.pink.shade300
+                                    : Colors.grey.shade300,
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            field,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: isSelected ? Colors.white : Colors.black87,
+                            child: Text(
+                              field,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: isSelected ? Colors.white : Colors.black87,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
+                    );
+                  }).toList(),
+                ),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
+              ],
+
               const _SectionTitle('Pilih Tanggal'),
               const SizedBox(height: 10),
               InkWell(
@@ -322,18 +337,30 @@ class _SchedulePageState extends State<SchedulePage> {
                 ),
               ),
 
-              const SizedBox(height: 20),
-              const _SectionTitle('Pilih Jam'),
-              const SizedBox(height: 6),
-              Text(
-                'Wajib pilih ${widget.durationHours} jam berurutan (1 jam per slot) • '
-                    'dipilih ${_selectedSlotIndexes.length}/${widget.durationHours}',
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 8),
-              _buildLegend(),
-              const SizedBox(height: 10),
-              _buildTimeSlotGrid(),
+              if (!_isClass) ...[
+                const SizedBox(height: 20),
+                const _SectionTitle('Pilih Jam'),
+                const SizedBox(height: 6),
+                Text(
+                  'Wajib pilih ${widget.durationHours} jam berurutan (1 jam per slot) • '
+                      'dipilih ${_selectedSlotIndexes.length}/${widget.durationHours}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+                const SizedBox(height: 8),
+                _buildLegend(),
+                const SizedBox(height: 10),
+                _buildTimeSlotGrid(),
+              ] else ...[
+                const SizedBox(height: 20),
+                const _SectionTitle('Pilih Sesi Kelas'),
+                const SizedBox(height: 6),
+                Text(
+                  'Setiap sesi berlangsung 2 jam',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+                const SizedBox(height: 10),
+                _buildClassSessions(),
+              ],
             ],
           ),
         ),
@@ -385,6 +412,54 @@ class _SchedulePageState extends State<SchedulePage> {
         _legendDot(Colors.grey.shade300, 'Penuh'),
         _legendDot(Colors.pink.shade100, 'Di keranjang'),
       ],
+    );
+  }
+  // Daftar sesi kelas: tiap sesi satu kartu pilihan (SelectableOption).
+// Sesi terpilih kalau kedua slot jamnya ada di _selectedSlotIndexes.
+  Widget _buildClassSessions() {
+    final slotsInCart = _slotsInCart;
+
+    return Column(
+      children: widget.court.classStartSlots.map((start) {
+        final isSelected = _selectedSlotIndexes.contains(start) &&
+            _selectedSlotIndexes.contains(start + 1);
+        final label = '${timeSlots[start]} - ${_nextHour(timeSlots[start + 1])}';
+        final inCart =
+            slotsInCart.contains(start) || slotsInCart.contains(start + 1);
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: SizedBox(
+            width: double.infinity,
+            child: SelectableOption(
+              selected: isSelected,
+              onTap: inCart ? () {} : () => _selectClassSession(start),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.schedule,
+                    size: 18,
+                    color: isSelected ? Colors.pink.shade300 : Colors.grey,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      inCart ? '$label • Di keranjang' : '$label (2 jam)',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: inCart ? Colors.grey : Colors.black87,
+                      ),
+                    ),
+                  ),
+                  if (isSelected)
+                    Icon(Icons.check_circle,
+                        color: Colors.pink.shade300, size: 20),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 

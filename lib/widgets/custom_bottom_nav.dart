@@ -18,12 +18,12 @@ const List<NavItemData> navItems = [
       icon: Icons.favorite_border,
       activeIcon: Icons.favorite,
       label: 'Favorit'),
-  NavItemData(
-      icon: Icons.history_outlined,
-      activeIcon: Icons.history,
-      label: 'Riwayat'),
-  NavItemData(
-      icon: Icons.person_outline, activeIcon: Icons.person, label: 'Akun'),
+  // NavItemData(
+  //     icon: Icons.history_outlined,
+  //     activeIcon: Icons.history,
+  //     label: 'Riwayat'),
+  // NavItemData(
+  //     icon: Icons.person_outline, activeIcon: Icons.person, label: 'Akun'),
 ];
 
 // Bottom navigation custom, reusable widget class terpisah.

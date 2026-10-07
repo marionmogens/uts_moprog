@@ -33,8 +33,8 @@ const List<AddonOption> addonOptions = [
   AddonOption(name: 'Coach', price: 150000)
 ];
 
-// Daftar tambahan yang ditawarkan, tergantung kategori layanan
-// Kelas tidak menawarkan Coach karena pelatih sudah termasuk di kelas
+// Daftar tambahan yang ditawarkan, tergantung kategori layanan.
+// Kelas tidak menawarkan Coach karena pelatih sudah termasuk di kelas.
 List<AddonOption> addonsFor(String category) {
   if (category == 'Kelas') {
     return addonOptions.where((a) => a.name != 'Coach').toList();

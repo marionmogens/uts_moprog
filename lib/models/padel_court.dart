@@ -6,7 +6,7 @@ class PadelCourt {
   final String id;
   final String name;
   final String location;
-  // Kategori layanan: 'Lapangan', 'Kelas', atau 'Sewa Alat'.
+  // Kategori layanan: 'Lapangan' atau 'Kelas'
   // Dipakai chip kategori di Home untuk memfilter daftar layanan.
   final String category;
   final String imageUrl;
@@ -18,6 +18,7 @@ class PadelCourt {
   final String description;
   final List<String> facilities; // nama fasilitas, dipetakan ke ikon di UI
   final String openHours;
+  final List<int> classStartSlots;
 
   bool isFavorite;
 
@@ -35,6 +36,7 @@ class PadelCourt {
     required this.description,
     required this.facilities,
     required this.openHours,
+    this.classStartSlots = const [],
     this.isFavorite = false,
   });
 }

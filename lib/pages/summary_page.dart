@@ -26,7 +26,7 @@ class _SummaryPageState extends State<SummaryPage> {
     if (_nameController.text.trim().isEmpty ||
         _phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lengkapi nama dan nomor HP dulu ya')),
+        const SnackBar(content: Text('Lengkapi nama dan nomor HP Anda')),
       );
       return;
     }

@@ -47,8 +47,8 @@ class ConfirmationPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Terima kasih, $customerName. Reservasi lapangan padel kamu '
-                      'sudah kami terima.',
+                  'Terima kasih, $customerName. Reservasi lapangan padel Anda '
+                      'sudah diterima.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                 ),
